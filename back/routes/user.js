@@ -1,6 +1,7 @@
 const express = require('express');
 const oracledb = require('oracledb');
 const db = require("../db");
+const jwtAuthentication = require("../auth");
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
@@ -10,6 +11,40 @@ const JWT_KEY = "secret_key";
 // 해시 함수 실행 위해 사용할 키로 아주 긴 랜덤한 문자를 사용하길 권장하며, 노출되면 안됨.
 // .env로 관리해야 함
 const saltRounds = 10;
+
+router.get('/:userId', jwtAuthentication, async (req, res) => {
+  const { userId } = req.params;
+  let connection;
+  try {
+    connection = await db.getConnection();
+    const result = await connection.execute(
+      `
+        SELECT U.*, CNT
+        FROM TBL_USER U
+        LEFT JOIN (
+            SELECT COUNT(*) AS CNT, USERID
+            FROM TBL_FEED
+            GROUP BY USERID
+        ) T ON U.USERID = T.USERID
+        WHERE U.USERID = :userId
+      `,
+      [userId],
+      {outFormat: oracledb.OUT_FORMAT_OBJECT}
+    );
+    
+    res.json({
+        result : "success",
+        info : result.rows[0]
+    });
+    
+  } catch (error) {
+    console.error('Error executing query', error);
+    res.status(500).send('Error executing query');
+  } finally {
+    await connection.close();
+  }
+});
+
 
 router.post('/login', async (req, res) => {
   const { userId, pwd } = req.body;

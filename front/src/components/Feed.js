@@ -24,6 +24,7 @@ import {
   Avatar,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import { useNavigate } from 'react-router-dom';
 
 const mockFeeds = [
   {
@@ -42,6 +43,7 @@ const mockFeeds = [
 ];
 
 function Feed() {
+  const navigator = useNavigate();
   const [open, setOpen] = useState(false);
   const [selectedFeed, setSelectedFeed] = useState(null);
   const [comments, setComments] = useState([]);
@@ -84,6 +86,9 @@ function Feed() {
           console.log("data ==> ", data);
           setFeed(data.list);
         });
+    } else {
+      alert("로그인 후 이용해주세요.");
+      navigator("/");
     }
   }
 
@@ -114,7 +119,7 @@ function Feed() {
                 />
                 <CardContent>
                   <Typography variant="body2" color="textSecondary">
-                    {feed.CONTENT}
+                    {feed.TITLE}
                   </Typography>
                 </CardContent>
               </Card>
@@ -178,6 +183,25 @@ function Feed() {
           </Box>
         </DialogContent>
         <DialogActions>
+          <Button variant='contained' onClick={()=>{
+            fetch("http://localhost:3010/feed/"+selectedFeed.ID, {
+              method : "DELETE",
+              headers: {
+                  "Authorization": "Bearer " + localStorage.getItem("token")
+              }
+            })
+              .then(res => res.json())
+              .then(data => {
+                alert(data.message);
+                handleClose();
+                handleGetFeed();
+              })
+              .catch(err => {
+                console.log("서버 에러!");
+              })
+          }} color="error">
+            삭제
+          </Button>
           <Button onClick={handleClose} color="primary">
             닫기
           </Button>
