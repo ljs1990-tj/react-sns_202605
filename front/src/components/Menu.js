@@ -1,6 +1,6 @@
 import React from 'react';
 import { Drawer, List, ListItem, ListItemText, Typography, Toolbar, ListItemIcon } from '@mui/material';
-import { Home, Add, AccountCircle } from '@mui/icons-material';
+import { Home, Add, AccountCircle, AddCard, Accessibility } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 
 function Menu() {
@@ -39,7 +39,27 @@ function Menu() {
           </ListItemIcon>
           <ListItemText primary="마이페이지" />
         </ListItem>
+
+        <ListItem button component={Link} to="/context1">
+          <ListItemIcon>
+            <Accessibility />
+          </ListItemIcon>
+          <ListItemText primary="Context 실습1" />
+        </ListItem>
+        <ListItem button component={Link} to="/context2">
+          <ListItemIcon>
+            <Accessibility />
+          </ListItemIcon>
+          <ListItemText primary="Context 실습2" />
+        </ListItem>
+        <ListItem button component={Link} to="/context3">
+          <ListItemIcon>
+            <Accessibility />
+          </ListItemIcon>
+          <ListItemText primary="Context 다크모드" />
+        </ListItem>
       </List>
+      
     </Drawer>
   );
 };
