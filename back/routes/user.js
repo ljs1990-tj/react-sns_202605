@@ -4,10 +4,11 @@ const db = require("../db");
 const jwtAuthentication = require("../auth");
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+require("dotenv").config();
 
 const router = express.Router();
 
-const JWT_KEY = "secret_key"; 
+const JWT_KEY = process.env.jwt_key; 
 // 해시 함수 실행 위해 사용할 키로 아주 긴 랜덤한 문자를 사용하길 권장하며, 노출되면 안됨.
 // .env로 관리해야 함
 const saltRounds = 10;
@@ -73,6 +74,7 @@ router.post('/login', async (req, res) => {
         };
 
         token = jwt.sign(payload, JWT_KEY, {expiresIn : '1h'});
+        console.log(JWT_KEY);
         console.log(token);
       }
     }

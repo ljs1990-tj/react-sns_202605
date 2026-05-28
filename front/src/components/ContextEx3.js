@@ -17,7 +17,7 @@ function Header(){
     </>
 }
 function Body(){
-    let {mode, setMode} = useContext(DarkModeContext);
+    let {mode} = useContext(DarkModeContext);
     return <>
         <div style={{
             padding : "50px 50px", 
@@ -30,7 +30,7 @@ function Body(){
     </>
 }
 function Footer(){
-    let {mode, setMode} = useContext(DarkModeContext);
+    let {mode} = useContext(DarkModeContext);
     return <>
         <div style={{
             padding : "50px 50px", 
@@ -42,7 +42,7 @@ function Footer(){
 }
 
 function Content(){
-    let {mode, setMode} = useContext(DarkModeContext);
+    let {mode} = useContext(DarkModeContext);
     return <>
         <div style={{
             padding : "50px 50px", 

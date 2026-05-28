@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
+import { jwtDecode } from "jwt-decode";
 import {
   TextField,
   Button,
@@ -15,7 +16,9 @@ import {
 import { PhotoCamera } from '@mui/icons-material';
 
 function Register() {
-  const [file, setFile] = React.useState(null);
+  const [file, setFile] = useState(null);
+  let titleRef = useRef("");
+  let contentRef = useRef("");
 
   const handleFileChange = (event) => {
     setFile(event.target.files[0]);
@@ -44,8 +47,11 @@ function Register() {
           </Select>
         </FormControl>
 
-        <TextField label="제목" variant="outlined" margin="normal" fullWidth />
+        <TextField 
+          inputRef={titleRef}
+          label="제목" variant="outlined" margin="normal" fullWidth />
         <TextField
+          inputRef={contentRef}
           label="내용"
           variant="outlined"
           margin="normal"
@@ -79,7 +85,36 @@ function Register() {
           </Typography>
         </Box>
 
-        <Button variant="contained" color="primary" fullWidth style={{ marginTop: '20px' }}>
+        <Button 
+          variant="contained" 
+          color="primary" fullWidth 
+          style={{ marginTop: '20px' }}
+          onClick={()=>{
+            const token = localStorage.getItem("token");
+            if(token){
+              const decoded = jwtDecode(token);
+              let feed = {
+                userId : decoded.userId,
+                title : titleRef.current.value,
+                content : contentRef.current.value
+              };
+
+              fetch("http://localhost:3010/feed", {
+              method : "POST",
+              headers: {
+                  "Authorization" : "Bearer " + localStorage.getItem("token"),
+                  "Content-type" : "application/json"
+              },
+              body : JSON.stringify(feed)
+            })
+              .then(res => res.json())
+              .then(data => {
+                console.log(data);
+              })
+
+            }
+          }}
+        >
           등록하기
         </Button>
       </Box>

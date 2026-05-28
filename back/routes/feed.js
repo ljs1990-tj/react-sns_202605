@@ -58,4 +58,30 @@ router.delete('/:feedId', jwtAuthentication, async (req, res) => {
   }
 });
 
+router.post('/', jwtAuthentication, async (req, res) => {
+  const { userId, title, content } = req.body;
+  let connection;
+  try {
+    connection = await db.getConnection();
+    const result = await connection.execute(
+      `
+        INSERT INTO TBL_FEED VALUES(FEED_SEQ.NEXTVAL, :userId, :title, :content, SYSDATE)
+      `,
+      [ userId, title, content ],
+      { autoCommit : true }
+    );
+    console.log(result);
+    res.json({
+        result : "success",
+        message : "추가 됨"
+    });
+    
+  } catch (error) {
+    console.error('Error executing query', error);
+    res.status(500).send('Error executing query');
+  } finally {
+    await connection.close();
+  }
+});
+
 module.exports = router;
